@@ -27,36 +27,56 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(callback) {
-  /*
-  callback = function(err, urls) {
-        if (!err) {
-          expect(err).to.be.null;
-          expect(urls).to.deep.equal(urlArray);
-        }
-        done(err);
-      }
-  */
-  callback (null, 
-    fs.readFile('/Users/student/Desktop/hrsf53-web-historian/web/archives/sites.txt', function(err, data) {
-      if (err) {
-        console.log('archive-helpers.js: could not read sites.txt');
-      } else {
-        return (JSON.parse(data));
-      }
-    })
-  );
+
+  var urls;
+  //readFile(filepath/, [encoding - 'utf8' is default], anonymous func(err, data){})
+  fs.readFile(exports.paths.list, function(err, data) {
+
+    urls = data.toString().split('\n');
+    //if(!err) --> pass the result of var - 'urls'
+    callback(err, urls);
+  });
   
 };
 
-exports.isUrlInList = function() {
+exports.isUrlInList = function(url, callback) {
+  var urls;
+
+  fs.readFile(exports.paths.list, function( err, data) {
+    urls = data;//.toString().split('\n');
+    //if(!err) --> pass the result of var - 'urls'
+    if (urls.indexOf(url) !== -1) {
+      callback(err, true);
+    } else {
+      callback(err, false);
+    }
+  });
 };
 
-//call usUrlInlList -> true/false???
-exports.addUrlToList = function() {
+exports.addUrlToList = function(url, callback) {
+  //fs.writeFile(fileName, data, [encoding], [callback])
+  fs.writeFile(exports.paths.list, url + '/n', 'utf8', function( err, data) {
+    callback(err, data);
+  });
 };
 
-exports.isUrlArchived = function() {
+//check this path: '../archives/sites'
+exports.isUrlArchived = function(url, callback) {
+  //process.cwd() method returns the current working directory
+  fs.readdir(exports.paths.archivedSites, function(err, files) {
+    // console.log(files);
+    if (files.indexOf(url) !== -1) {
+      callback(err, true);
+    } else {
+      callback(err, false);
+    }
+  });
 };
 
 exports.downloadUrls = function() {
+  
 };
+
+
+
+
