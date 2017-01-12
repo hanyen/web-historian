@@ -12,7 +12,8 @@ var _ = require('underscore');
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
-  list: path.join(__dirname, '../archives/sites.txt')
+  list: path.join(__dirname, '../archives/sites.txt'),
+  homepage: path.join(__dirname, '../web/public/index.html')
 };
 
 // Used for stubbing paths for tests, do not modify
@@ -25,12 +26,32 @@ exports.initialize = function(pathsObj) {
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function() {
+exports.readListOfUrls = function(callback) {
+  /*
+  callback = function(err, urls) {
+        if (!err) {
+          expect(err).to.be.null;
+          expect(urls).to.deep.equal(urlArray);
+        }
+        done(err);
+      }
+  */
+  callback (null, 
+    fs.readFile('/Users/student/Desktop/hrsf53-web-historian/web/archives/sites.txt', function(err, data) {
+      if (err) {
+        console.log('archive-helpers.js: could not read sites.txt');
+      } else {
+        return (JSON.parse(data));
+      }
+    })
+  );
+  
 };
 
 exports.isUrlInList = function() {
 };
 
+//call usUrlInlList -> true/false???
 exports.addUrlToList = function() {
 };
 
