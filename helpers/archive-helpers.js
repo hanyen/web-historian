@@ -73,10 +73,42 @@ exports.isUrlArchived = function(url, callback) {
   });
 };
 
-exports.downloadUrls = function() {
-  
+exports.downloadUrls = function(urlArray) {
+  //should take an array of urls to download
+  fs.readFile(exports.paths.list, function(err, data) {
+    urls = data.toString().split('\n'); //we get an array of urls in sites.txt
+    //for each element in the urlArray
+    for (var i = 0; i < urls.length; i++) {
+      //Use isUrlArchived (will return boolean) to check if the element has been archived before
+      
+      //if isUrlArchived returns false
+        //go to the website of the given url
+        //download the website source code
+        //save it inside exports.path.archivedSites folder
+      //else
+        //do nothing
+      
+      fs.open(exports.paths.archivedSites + '/' + urls[i], 'wx', function(err, fd) {
+        if (err) {
+          console.log('archive-helpers.js: Fail to create a new file');
+        } else {
+          fs.close(fd, function (err) {
+            if (err) {
+              console.log('archive-helpers.js: Fail to close new file');
+            }
+          });
+        }
+      }); //wx prevents overwriting existing file
+      //name it with the element name (i.e. url - www.example.com, www.google.com)
+    }
+    
+  });
 };
 
 
-
-
+// exports.paths = {
+//   siteAssets: path.join(__dirname, '../web/public'),
+//   archivedSites: path.join(__dirname, '../archives/sites'),
+//   list: path.join(__dirname, '../archives/sites.txt'),
+//   homepage: path.join(__dirname, '../web/public/index.html')
+// };
