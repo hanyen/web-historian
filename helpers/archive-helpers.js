@@ -13,7 +13,8 @@ exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
   list: path.join(__dirname, '../archives/sites.txt'),
-  homepage: path.join(__dirname, '../web/public/index.html')
+  homepage: path.join(__dirname, '../web/public/index.html'),
+  loadingPage: path.join(__dirname, '../web/public/loading.html')
 };
 
 // Used for stubbing paths for tests, do not modify
@@ -43,7 +44,7 @@ exports.isUrlInList = function(url, callback) {
   var urls;
 
   fs.readFile(exports.paths.list, function( err, data) {
-    urls = data;//.toString().split('\n');
+    urls = data;
     //if(!err) --> pass the result of var - 'urls'
     if (urls.indexOf(url) !== -1) {
       callback(err, true);
