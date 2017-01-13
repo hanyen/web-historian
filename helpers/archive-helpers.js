@@ -67,44 +67,59 @@ exports.isUrlArchived = function(url, callback) {
     // console.log(files);
     if (files.indexOf(url) !== -1) {
       callback(err, true);
+      return true;
     } else {
       callback(err, false);
+      return false;
     }
   });
 };
 
 exports.downloadUrls = function(urlArray) {
+  // var urls; //[''] - commented out 'readListOfUrls' in test.js (line 80)
   //should take an array of urls to download
-  fs.readFile(exports.paths.list, function(err, data) {
-    urls = data.toString().split('\n'); //we get an array of urls in sites.txt
-    //for each element in the urlArray
-    for (var i = 0; i < urls.length; i++) {
-      //Use isUrlArchived (will return boolean) to check if the element has been archived before
-      
+  console.log('urlArray: ', urlArray);
+              //archives/sites.txt
+  exports.readListOfUrls( function(err, urls) {
+    if (err) {
+      console.log('archive-helpers: downloadUrls fails');
+    } else {
+      // console.log('data: ', JSON.parse(data));
+      //urls = data.toString().split('\n'); //we get an array of urls in sites.txt
+      console.log('urls', urls);
+      //for each element in the urlArray
+      for (var i = 0; i < urls.length; i++) {
+        //Pass urls[i] into isUrlArchived (will return boolean) to check if the element has been archived before
+        var isArchived = exports.isUrlArchived(urls[i], () => {});
+        console.log('urls[i]: ', urls[i]);
+        console.log('isArchived: ', isArchived);
+        if (!isArchived) {
+          //save it inside exports.path.archivedSites folder
+          fs.open(exports.paths.archivedSites + '/' + urls[i], 'wx', function(err, fd) {
+            if (err) {
+              console.log('archive-helpers.js: Fail to create a new file');
+            } else {
+              fs.close(fd, function (err) {
+                if (err) {
+                  console.log('archive-helpers.js: Fail to close new file');
+                }
+              });
+            }
+          }); //wx prevents overwriting existing file
+          //name it with the element name (i.e. url - www.example.com, www.google.com)
+        } else {
+          //do nothing
+        }
+      }
       //if isUrlArchived returns false
         //go to the website of the given url
         //download the website source code
-        //save it inside exports.path.archivedSites folder
       //else
         //do nothing
-      
-      fs.open(exports.paths.archivedSites + '/' + urls[i], 'wx', function(err, fd) {
-        if (err) {
-          console.log('archive-helpers.js: Fail to create a new file');
-        } else {
-          fs.close(fd, function (err) {
-            if (err) {
-              console.log('archive-helpers.js: Fail to close new file');
-            }
-          });
-        }
-      }); //wx prevents overwriting existing file
-      //name it with the element name (i.e. url - www.example.com, www.google.com)
     }
-    
+              
   });
 };
-
 
 // exports.paths = {
 //   siteAssets: path.join(__dirname, '../web/public'),

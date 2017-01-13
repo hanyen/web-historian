@@ -22,3 +22,6 @@ var archiveHelper = require('../helpers/archive-helpers');
 //['example1.com', 'example2.com']
 //needToProcess = ['amazon.com']
 // call archiveHelper.readListOfUrls()
+
+
+ //USE CHRON worker will check '.txt'
