@@ -1,10 +1,33 @@
+var defaultCorsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-headers': 'content-type, accept',
+  'access-control-max-age': 10 // Seconds.
+};
+
 var path = require('path');
 var archive = require('../helpers/archive-helpers');
+var url = require('url');
 // require more modules/folders here!
 var fs = require('fs');
 
+
+
 exports.handleRequest = function (req, res) {
-  var method = request.method;
+  // var method = request.method;
+  var path = url.parse(req.url).pathname;
+  console.log('path', path);
+
+  var statusCode = 200;
+
+  var headers = defaultCorsHeaders;
+
+  if (path !== '/') {
+    console.log(' i am here');
+    statusCode = 404;
+    res.writeHead(statusCode, headers);
+    res.end('404 File not found');
+  }
 
   //readFile - needs the ABSOLUTE PATHFILE forthe homepage - 'index.html'
   fs.readFile(archive.paths.homepage, function(err, data) {
@@ -16,7 +39,25 @@ exports.handleRequest = function (req, res) {
     }
   });
   
-  if (method === 'GET') {
+
+  if (req.method === 'POST') {
+    console.log('i am inside post');
+    var body = '';
+    statusCode = 201;
+    req.on('data', function (data) {
+      body += data;
+      console.log('url: ' + JSON.stringify(body.substr(4)));
+    });
+
+    // req.on('end', function (data) {
+    //   body = JSON.parse(data);
+    // });
+
+    //res.writeHead(statusCode, headers);
+  //  res.end(JSON.stringify(body));
+
+  }
+  /*if (method === 'GET') {
 
   } else if (method === 'POST') {
     if (req.url === '/index.html') {
@@ -31,8 +72,7 @@ exports.handleRequest = function (req, res) {
          
       }
     }
-  }
+  }*/
 
   // res.end(archive.paths.list);
 };
-
