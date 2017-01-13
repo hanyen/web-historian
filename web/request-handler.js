@@ -6,10 +6,38 @@ var defaultCorsHeaders = {
 };
 
 var path = require('path');
-var helpers = require('../helpers/archive-helpers');
+var archive = require('../helpers/archive-helpers');
 var url = require('url');
 // require more modules/folders here!
 var fs = require('fs');
+var helpers = require('html-helpers');
+
+//create an 'action' object literal to hold the GET and POST functions
+var action = {
+  'GET': function (request, response) {
+
+  },
+  'POST': function (request, response) {
+
+  }
+}
+
+exports.handleRequest = function (req, res) {
+  //set handler to the action object's corresponding server request key (GET or PUT)
+  var handler = action[req.method]; 
+  if (handler) { 
+    //execute the GET or PUT methods in the action object literal
+    handler(req, res); 
+  } else {
+    //use the http helper send404 method //TODO
+    helpers.send404(response);
+  }
+};
+
+
+
+
+
 
 
 exports.handleRequest = function (request, respond) {
@@ -29,7 +57,7 @@ exports.handleRequest = function (request, respond) {
   }
 
   //readFile - needs the ABSOLUTE PATHFILE forthe homepage - 'index.html'
-  fs.readFile(helpers.paths.homepage, function(err, data) {
+  fs.readFile(archive.paths.homepage, function(err, data) {
     if (err) {
       console.log('request-handler.js: could not render index.html to screen');
     } else {
@@ -47,22 +75,22 @@ exports.handleRequest = function (request, respond) {
       console.log('url: ' + url);
       //isUrlInList: find out if url is in the sites.txt
                         //url, callback(err, true/false)
-      helpers.isUrlInList (url, function (err, exists) {
-        console.log('I am inside helpers.isUrlInlist');
+      archive.isUrlInList (url, function (err, exists) {
+        console.log('I am inside archive.isUrlInlist');
         console.log('Exist?', exists);
         if (!err) {
           //if exists === true
           if (exists === true) {
-            //helpers.isUrlArchived: get the webpage from storage 
+            //archive.isUrlArchived: get the webpage from storage 
             
           } else {
-            //helpers.addUrlToList: write url to sites.txt 
+            //archive.addUrlToList: write url to sites.txt 
             console.log(url + ' does not exist in sites.txt, so it will be added');
             //this method 'OVERWRITES' previous url in sites.txt (length === 1)
-            helpers.addUrlToList(url, function (err) {
+            archive.addUrlToList(url, function (err) {
               if (!err) {
                 //render public/loading.html
-                fs.readFile(helpers.paths.loadingPage, function(err, data) {
+                fs.readFile(archive.paths.loadingPage, function(err, data) {
                   if (!err) {
                     respond.end(data);
                   } else {
