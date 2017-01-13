@@ -12,9 +12,9 @@ var url = require('url');
 var fs = require('fs');
 
 
-exports.handleRequest = function (req, res) {
+exports.handleRequest = function (request, respond) {
   // var method = request.method;
-  var path = url.parse(req.url).pathname;
+  var path = url.parse(request.url).pathname;
   console.log('path', path);
 
   var statusCode = 200;
@@ -24,8 +24,8 @@ exports.handleRequest = function (req, res) {
   if (path !== '/') {
     console.log(' i am here');
     statusCode = 404;
-    res.writeHead(statusCode, headers);
-    res.end('404 File not found');
+    respond.writeHead(statusCode, headers);
+    respond.end('404 File not found');
   }
 
   //readFile - needs the ABSOLUTE PATHFILE forthe homepage - 'index.html'
@@ -33,15 +33,15 @@ exports.handleRequest = function (req, res) {
     if (err) {
       console.log('request-handler.js: could not render index.html to screen');
     } else {
-      res.end(data);
+      respond.end(data);
     }
   });
   
 
-  if (req.method === 'POST') {
+  if (request.method === 'POST') {
     var body = '';
     statusCode = 201;
-    req.on('data', function (data) {
+    request.on('data', function (data) {
       body += data;
       var url = JSON.stringify(body.substr(4));
       console.log('url: ' + url);
@@ -64,7 +64,7 @@ exports.handleRequest = function (req, res) {
                 //render public/loading.html
                 fs.readFile(helpers.paths.loadingPage, function(err, data) {
                   if (!err) {
-                    res.end(data);
+                    respond.end(data);
                   } else {
                     console.log('request-handler.js: could not render index.html to screen');
                   }

@@ -6,36 +6,27 @@ var initialize = require('./initialize.js');
 // HINT: It has to do with what's in .gitignore
 initialize('./archives');
 
+//declaring the ip and port number to use
 var port = 8080;
 var ip = '127.0.0.1';
-var server = http.createServer(handler.handleRequest);
 
-/*//2. set router
-var router = {
-  '/web-historian': handler.requestHandler
-  // ...
-};*/
+// https://nodejs.org/en/docs/guides/anatomy-of-an-http-transaction/
+// =================================================================
+// Any node web server application will at some point have to create 
+// a web server object. This is done by using createServer.
 
-/*//3. set server
-var server = http.createServer( function(req, res) {
-  console.log('Serving request type ' + req.method + ' for url ' + req.url);
+// The Server object returned by createServer is an EventEmitter, 
+// and what we have here is just shorthand for creating a server object 
+// and then adding the listener later.
 
-  var route = router[url.parse(req.url).pathname];
-  if (route) {
-    route(req, res);
-  } else {
-    utils.sendResponse(res, '', 404);
-  }
-});
-*/
+// When an HTTP request hits the server, node calls the request handler 
+// function with a few handy objects for dealing with the transaction, 
+// request and response. 
+var server = http.createServer(handler.handleRequest /*magic happens here*/);
+
 if (module.parent) {
   module.exports = server;
 } else {
-  server.listen(port, ip);
+  server.listen(port, ip); //listening on the ip and port number
   console.log('Listening on http://' + ip + ':' + port);
 }
-// console.log('Listening on http://' + ip + ':' + port);
-// server.listen(port, ip);
-
-
-// console.log(url);
