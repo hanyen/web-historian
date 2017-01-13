@@ -1,26 +1,32 @@
-var defaultCorsHeaders = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept',
-  'access-control-max-age': 10 // Seconds.
-};
-
 var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var url = require('url');
 // require more modules/folders here!
 var fs = require('fs');
-var helpers = require('html-helpers');
+var helpers = require('./http-helpers');
 
 //create an 'action' object literal to hold the GET and POST functions
 var action = {
   'GET': function (request, response) {
+    console.log('im here');
+    var urlPath = url.parse(request.url).pathname;
+    console.log(urlPath);
+    if (urlPath === '/') {
+      urlPath = '/index.html';
+    }
+    helpers.serveAssets(response, urlPath, function() {
+      //trim leading slash if present
+      if (urlPath[0] === '/') {
+        urlPath = urlPath.slice(1);
+        console.log('After slicing, urlPath should now be: ' + urlPath)
+      }
+    })
 
   },
   'POST': function (request, response) {
 
   }
-}
+};
 
 exports.handleRequest = function (req, res) {
   //set handler to the action object's corresponding server request key (GET or PUT)
@@ -38,7 +44,7 @@ exports.handleRequest = function (req, res) {
 
 
 
-
+/*
 
 exports.handleRequest = function (request, respond) {
   // var method = request.method;
@@ -112,4 +118,4 @@ exports.handleRequest = function (request, respond) {
 
   }
   
-};
+};*/
